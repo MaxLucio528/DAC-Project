@@ -304,7 +304,7 @@ int hist(Aluno user){
         fprintf(fp, "Classificacao do aluno na turma: N/A de %d\n", m);
     }else{ //condição onde foram atualizados e estão normais
         fprintf(fp, "Coeficiente de Rendimento: %.2f\n", valpos);
-        fprintf(fp, "Classificacao do aluno na turma: %d de %d\n", pos, m);
+        fprintf(fp, "Classificacao do aluno na turma: %d de %d\n", (m+1-pos), m);
     }
     
     fputs("\n", fp);
