@@ -1,33 +1,35 @@
 #include "main.h"
 
 int hist(Aluno user){
-    int i, j, k, l, m, n; //va,riáveis inteiras auxiliares
-    int contcred; //contador de créditos totais do aluno
-    float contcn; //contador de créditos * nota totais do aluno
-    int validador; //variável auxiliar de validação
-    float aux; //variável auxiliar para ordenação
-    char ra[11]; //string que guardará o ra para ser o nome do arquivo
-    int pos; //variável que guarda a classificação do aluno logado
-    float valpos; //variável que guarda o valor do coeficiente do usuário
-    Aluno alunotmp; //variável temporária para contagem de alunos
-    Aluno *aluno; //variável que guadará os alunos cadastrados
-    Matricula temp; //variável temporária para contagem de matriculas
-    Matricula *alunos; //vetor de struct dinâmico que guarda todos os alunos
-    Disciplina tmp; //variável temporária para contagem de disciplinas
-    Disciplina *disc; //vetor de struct dinâmico que guarda todas as disciplinas
-    FILE *fp; //ponteiro para arquivo
+    int i, j, k, l, m, n; // Integer auxiliary variables.
+    int contcred; // Students' total credits counter.
+    float contcn; // Students' total credits * score counter.
+    int validador; // Validation auxiliary variable.
+    float aux; // Ordering auxilirary variable.
+    char ra[11]; // Stores the registration number to be the file name.
+    int pos; // Stores the logged student's classification.
+    float valpos; // Stores the user's coeficient.
+    Aluno alunotmp; // Temporarily stores the student count.
+    Aluno *aluno; // Stores all the students.
+    Matricula temp; // Temporarily stores the enrollment count.
+    Matricula *alunos; // Stores all the students enrollments.
+    Disciplina tmp; // Temporarily stores the subjects count.
+    Disciplina *disc; // Stores all the subjects.
+    FILE *fp; // File pointer.
     
     getchar();
     
-    fp = fopen("Alunos.txt", "r"); /* abrindo o arquivo para pegar o
-                                               * ra do usuário em formato de string. */
+    // Opening this file to get the user registration number.
+    fp = fopen("Alunos.txt", "r");
     
     if(fp == NULL)
-       return 1; //impossível abrir o arquivo e interrompe a função
+       return 1; // Couldn't open the file, interrupting the function.
     
-    while(fscanf(fp, "%6s,%[^,],%[^,],%[^\n]", ra, alunotmp.nome, alunotmp.nome, 
-            alunotmp.senha) != EOF){
-        //achando o ra e saindo do laço
+    while(!feof(fp)){
+        fscanf(fp, "%6s,%100[^,],%10[^,],%10[^\n]", ra, alunotmp.nome, alunotmp.login, 
+            alunotmp.senha);
+
+        // Registration number found.
         if(atoi(ra) == user.ra)
             break;
     }
@@ -35,49 +37,54 @@ int hist(Aluno user){
     fflush(fp);
     fclose(fp);
     
-    //completando a string manualmente
+    // Manually completing the string.
     ra[6] = '.';
     ra[7] = 't';
     ra[8] = 'x';
     ra[9] = 't';
     ra[10] = '\0';
     
-    fp = fopen("Alunos.txt", "r"); /* abrindo o arquivo para contar todos
-                                    * os alunos cadastrados. */
+    // Opening this file to count all the registered students.
+    fp = fopen("Alunos.txt", "r");
     
     if(fp == NULL)
-        return 1; //impossível abrir o arquivo e interrompe a função
+        return 1; // Couldn't open the file, interrupting the function.
     
-    m = 0; //inicialmente atribuindo zero ao m para usar no laço abaixo
+    m = 0; // Will be the total size of the array "coeficiente".
     
-    //laço que conta quantos alunos estão cadastrados
-    while(fscanf(fp, "%d,%[^,],%[^,],%[^\n]", &alunotmp.ra, alunotmp.nome, 
-            alunotmp.nome, alunotmp.senha) != EOF){
+    // Counting how many students are registered.
+    while(!feof(fp)){
+        fscanf(fp, "%d,%100[^,],%10[^,],%10[^\n]", &alunotmp.ra, alunotmp.nome, alunotmp.login,
+        alunotmp.senha);
+
         m++;
     }
     
-    float coeficiente[m]; /* vetor de pf que guardará os coeficientes de rendimento 
-                          * dos alunos */
+    // Will store all the efficiency coeficient.
+    float coeficiente[m];
     
     fflush(fp);
     fclose(fp);
     
+    // Will store all the students.
     aluno = (Aluno *) malloc(m * sizeof(Aluno));
     
-    fp = fopen("Alunos.txt", "r"); /* abrindo o arquivo para leitura de todos os
-                                    * alunos. */
+    // Opening this file to get all the students.
+    fp = fopen("Alunos.txt", "r");
     
     if(fp == NULL)
-        return 1; //impossível abrir o arquivo e interrompe a função
+        return 1; // Couldn't open the file, interrupting the function.
     
-    l = 0; //atribuindo inicialmente zero ao l para usar abaixo
+    l = 0; // Will indicate the positions of the array below.
     
-    //laço que guarda os alunos no sistema
-    while(fscanf(fp, "%d,%[^,],%[^,],%[^\n]", &aluno[l].ra, aluno[l].nome, 
-            aluno[l].nome, aluno[l].senha) != EOF){
+    // Storing all the students on the struct.
+    while(!feof(fp)){
+        fscanf(fp, "%d,%100[^,],%10[^,],%10[^\n]", &aluno[l].ra, aluno[l].nome, aluno[l].login,
+        aluno[l].senha);
+        
         l++;
         
-        //evitando que o laço tente salvar em uma posição inexistente
+        // Preventing the loop from going to a unexistent position.
         if(l >= m)
             break;
     }
@@ -85,43 +92,44 @@ int hist(Aluno user){
     fflush(fp);
     fclose(fp);
     
-    fp = fopen("AlunosDisciplinas.txt", "r"); /* abrindo o arquivo para contar
-                                               * quantas matrículas tem. */
+    // Opening this file to count the number of enrollments.
+    fp = fopen("AlunosDisciplinas.txt", "r");
     
     if(fp == NULL)
-        return 1; //impossível abrir o arquivo e interrompe a função
+        return 1; // Couldn't open the file, interrupting the function.
     
-    i = 0; //atribuindo inicialmente o zero para o i
+    i = 0; // Will be the counter of enrollments.
     
-    //laço que incrementa o i para contar quantas matrículas tem no sistema
-    while(fscanf(fp, "%d,%[^,],%d,%f,%f\n", &temp.ra, temp.codigo, &temp.semestre, 
-            &temp.nota, &temp.faltas) != EOF){
+    // Counts how many enrollments there is.
+    while(!feof(fp)){
+        fscanf(fp, "%d,%5[^,],%d,%f,%f\n", &temp.ra, temp.codigo, &temp.semestre, &temp.nota,
+        &temp.faltas);
+
         i++;
     }
     
     fflush(fp);
     fclose(fp);
     
-    //alocando espaço para guardar as matrículas
+    // Will store the enrollments.
     alunos = (Matricula *) malloc(i * sizeof(Matricula));
     
-    fp = fopen("AlunosDisciplinas.txt", "r"); /* abrindo o arquivo para ler e
-                                               * salvar no sistema todas as 
-                                               * matrículas existentes. */
+    // Opening this file to save all the enrollments on a struct.
+    fp = fopen("AlunosDisciplinas.txt", "r");
     
     if(fp == NULL)
-        return 1; //impossível abrir o arquivo e interrompe a função
+        return 1; // Couldn't open the file, interrupting the function.
     
-    //laço que aloca espaço e salva o resto das matrículas existentes
+    // Saving all the enrollments.
     for(j = 0; j < i; j++){
-        fscanf(fp, "%d,%[^,],%d,%f,%f\n", &alunos[j].ra, alunos[j].codigo, 
-                &alunos[j].semestre, &alunos[j].nota, &alunos[j].faltas);
+        fscanf(fp, "%d,%5[^,],%d,%f,%f\n", &alunos[j].ra, alunos[j].codigo, &alunos[j].semestre,
+        &alunos[j].nota, &alunos[j].faltas);
     }
     
     fflush(fp);
     fclose(fp);
     
-    //bubble sort que ordena os alunos por RA em ordem crescente
+    // Ordering the students by registration number in crescent order via bubble sort.
     for(j = 0; j < i; j++){
         for(l = (j+1); l < i; l++){
             if(alunos[l].ra < alunos[j].ra){
@@ -132,7 +140,7 @@ int hist(Aluno user){
         }
     }
     
-    //bubble sort que ajusta os semestres dos alunos em ordem crescente
+    // Adjusting the students semesters order via bubble sort.
     for(j = 0; j < i; j++){
         for(l = (j+1); l < i; l++){
             if(alunos[l].ra == alunos[j].ra && alunos[l].semestre < alunos[j].semestre){
@@ -143,7 +151,7 @@ int hist(Aluno user){
         }
     }
     
-    //laço que verifica se o aluno tem alguma matrícula
+    // Checks if the student has any enrollment.
     for(j = 0; j < i; j++){
         if(user.ra == alunos[j].ra){
             validador = 1;
@@ -154,72 +162,76 @@ int hist(Aluno user){
         }
     }
     
-    //se o aluno não tem nenhuma matrícula, a função é interrompida
+    // Student doesn't have any enrollments.
     if(validador == 0){
-        fp = fopen(ra, "w"); //criando o histórico do aluno
+        // Creating student record file.
+        fp = fopen(ra, "w");
     
         if(fp == NULL)
-           return 1; //impossível abrir o arquivo e interrompe a função
+           return 1; // Couldn't create the file, interrupting the function.
         
-        fputs("Faculdade de Tecnologia - UNICAMP\n", fp);
+        fputs("School of Technology - UNICAMP\n", fp);
         fputs("\n", fp);
-        fputs("Relatorio de Matricula\n", fp);
+        fputs("Enrollment Report\n", fp);
         fputs("\n", fp);
 
-        fprintf(fp, "Nome Completo: %s\n", user.nome);
-        fprintf(fp, "RA: %d\n", user.ra);
-        fprintf(fp, "Coeficiente de Rendimento: Nenhum\n");
-        fprintf(fp, "Classificacao do aluno na turma: N/A de %d\n", m);
+        fprintf(fp, "Full Name: %s\n", user.nome);
+        fprintf(fp, "Registration Number: %d\n", user.ra);
+        fprintf(fp, "Efficiency Coeficient: None\n");
+        fprintf(fp, "Student classification on class: N/A of %d\n", m);
         
         fputs("\n", fp);
     
-        fputs("Disciplina\tNota\tFaltas(%)\tSituacao\n", fp);
+        fputs("Subject\t\tScore\tAbsences(%)\tSituation\n", fp);
         
-        fputs("O aluno nao tem matriculas!\n", fp);
+        fputs("The student doesn't have any enrollments!\n", fp);
         
         fflush(fp);
         fclose(fp);
         
-        puts("O arquivo foi gerado com sucesso!");
-        puts("Pressione ENTER para continuar");
+        puts("Record file generated successfully!");
+        puts("Type ENTER to continue...");
         getchar();
 
         return 0;
     }
     
-    fp = fopen("Disciplinas.txt", "r"); /* abrindo o arquivo para ver o número de
-                                         * disciplinas presentes no arquivo */
+    // Opening this file to count the number of subjects on the file.
+    fp = fopen("Disciplinas.txt", "r");
     
     if(fp == NULL)
-       return 1; //impossível abrir o arquivo e interrompe a função
+       return 1; // Couldn't open the file, interrupting the function.
     
-    k = 0; /* variável que guardará quantas disciplinas o aluno se matriculou 
-            * no semestre. */
+    k = 0; // Will store the number of subjects the student enrolled in the semester.
     
-    while(fscanf(fp,"%[^,],%[^,],%d\n", tmp.codigo, tmp.nome, 
-            &tmp.creditos) != EOF){
+    // Counting the number of subjects the student enrolled in the semester. 
+    while(!feof(fp)){
+        fscanf(fp,"%5[^,],%100[^,],%d\n", tmp.codigo, tmp.nome, &tmp.creditos);
+
         k++;
     }
     
     fflush(fp);
     fclose(fp);
     
-    fp = fopen("Disciplinas.txt", "r"); /* abrindo o arquivo para salvar as
-                                         * disciplinas em uma struct. */
+    // Opening this file to save the subjects on a struct.
+    fp = fopen("Disciplinas.txt", "r");
     
     if(fp == NULL)
-       return 1; //impossível abrir o arquivo e interrompe a função
+       return 1; // Couldn't open the file, interrupting the function.
     
-    //alocando espaço para as disciplinas do aluno no semestre
+    // Will store the subjects the student enrolled.
     disc = (Disciplina *) malloc(k * sizeof(Disciplina));
     
-    l = 0; //atribuindo zero ao l para usar como posição do vetor no laço abaixo
+    l = 0; // Will indicate the position of the array below.
     
-    while(fscanf(fp,"%[^,],%[^,],%d\n", disc[l].codigo, disc[l].nome, 
-            &disc[l].creditos) != EOF){
+    // Saving the subjects the student enrolled.
+    while(!feof(fp)){
+        fscanf(fp,"%5[^,],%100[^,],%d\n", disc[l].codigo, disc[l].nome, &disc[l].creditos);
+
         l++;
                     
-        //evitando que o laço tente salvar em uma posição inexistente
+        // Preventing the loop from going to a unexistent position.
         if(l >= k)
             break;
     }
@@ -227,17 +239,17 @@ int hist(Aluno user){
     fflush(fp);
     fclose(fp);
     
-    //atribuindo zero a estas variáveis para usar abaixo
+    // Initializing those variables.
     contcn = 0;
     contcred = 0;
     
-    //laço que calcula os coeficientes de rendimento dos alunos
-    for(l = 0; l < m; l++){ //1º laço repete por quantidade de alunos cadastrados
-       for(j = 0; j < i; j++){ //2º laço repete por quantidade de matrículas
-           //condição onde o aluno é encontrado
+    // Calculates the students' efficiency coeficient.
+    for(l = 0; l < m; l++){ // 1st loop repeats by the amount of registered students.
+       for(j = 0; j < i; j++){ // 2nd loop repeats by the amount of enrollments.
+           // Student found.
            if(aluno[l].ra == alunos[j].ra){
-               for(n = 0; n < k; n++){ //3º laço repete por quantidade de disciplinas
-                   //condição onde a disciplina é encontrada
+               for(n = 0; n < k; n++){ // 3rd loop repeats by the amount of subjects.
+                   //Subject found.
                    if(strcmp(alunos[j].codigo, disc[n].codigo) == 0){
                        if(alunos[j].nota == -1)
                            break;
@@ -251,22 +263,22 @@ int hist(Aluno user){
            }
        }
        
-       coeficiente[l] = (contcn / contcred); //calculando o coeficiente
+       coeficiente[l] = (contcn / contcred); // Calculating the coeficient.
        
-       //condição onde a nota e falta não foi atualizada
+       // Score and absence wasn't updated.
        if(contcn == 0 && contcred == 0)
            coeficiente[l] = 0;
        
-       contcn = 0; //zerando para usar novamente
-       contcred = 0; //zerando para usar novamente
+       contcn = 0; // Attibuting zero to use again.
+       contcred = 0; // Attibuting zero to use again.
        
-       //condição onde o aluno sendo tratado é o do usuário
+       // Record being made is of the user.
        if(user.ra == aluno[l].ra){
-           valpos = coeficiente[l]; //salvando o valor do coeficiente do usuário
+           valpos = coeficiente[l]; // Saving the user coeficient value.
        }
     }
 
-    //bubble sort para ordenar o vetor
+    // Ordering the array via bubble sort.
     for(l = 0; l < m; l++){
         for(j = (l+1); j < m; j++){
             if(coeficiente[j] < coeficiente[l]){
@@ -277,60 +289,61 @@ int hist(Aluno user){
         }
     }
     
-    //laço que encontra a posição do aluno no classificação
+    // Finding the student position in the classification.
     for(l = 0; l < m; l++){
-        //condição onde se encontra o valor
+        // Position found.
         if(valpos == coeficiente[l]){
             pos = l+1;
         }
     }
     
-    fp = fopen(ra, "w"); //criando o histórico do aluno
+    // Creating student record file.
+    fp = fopen(ra, "w");
     
     if(fp == NULL)
-       return 1; //impossível abrir o arquivo e interrompe a função
-    
-    fputs("Faculdade de Tecnologia - UNICAMP\n", fp);
+       return 1; // Couldn't create the file, interrupting the function.
+        
+    fputs("School of Technology - UNICAMP\n", fp);
     fputs("\n", fp);
-    fputs("Relatorio de Matricula\n", fp);
+    fputs("Enrollment Report\n", fp);
     fputs("\n", fp);
     
-    fprintf(fp, "Nome Completo: %s\n", user.nome);
-    fprintf(fp, "RA: %d\n", user.ra);
+    fprintf(fp, "Full Name: %s\n", user.nome);
+    fprintf(fp, "Registration Number: %d\n", user.ra);
     
-    //condição onde o coeficiente é zero já que a nota e falta não foram atualizados
+    // Score and absence weren't updated.
     if(valpos == 0){
-        fprintf(fp, "Coeficiente de Rendimento: Nenhum\n");
-        fprintf(fp, "Classificacao do aluno na turma: N/A de %d\n", m);
-    }else{ //condição onde foram atualizados e estão normais
-        fprintf(fp, "Coeficiente de Rendimento: %.2f\n", valpos);
-        fprintf(fp, "Classificacao do aluno na turma: %d de %d\n", (m+1-pos), m);
+        fprintf(fp, "Efficiency Coeficient: None\n");
+        fprintf(fp, "Student position on class: N/A of %d\n", m);
+    }else{ // Score and absence were updated.
+        fprintf(fp, "Efficiency Coeficient: %.2f\n", valpos);
+        fprintf(fp, "Student position on class: %d of %d\n", (m+1-pos), m);
     }
     
     fputs("\n", fp);
     
-    fputs("Disciplina\tNota\tFaltas(%)\tSituacao\n", fp);
+    fputs("Subject\t\tScore\tAbsences(%)\tSituation\n", fp);
     
-    //laço que imprime as matrículas na tela
+    // Saving the enrollments on the record file.
     for(j = 0; j < i; j++){
         if(user.ra == alunos[j].ra){
-            //condição onde a nota e falta não foram atualizados
+            // Score and absence weren't updated.
             if(alunos[j].nota == -1){
-                fprintf(fp, "%s\t\tN/A\tN/A\t\tIndefinida, nota e falta nao atualizadas!\n", 
+                fprintf(fp, "%s\t\tN/A\t\tN/A\t\t\tUndefined, score and absence weren't updated!\n", 
                         alunos[j].codigo);
                 
                 continue;
             }
             
             if(alunos[j].nota >= 5 && alunos[j].faltas < 25){
-                fprintf(fp, "%s\t\t%.1f\t%.1f\t\tAprovado por Nota e Frequencia\n", 
+                fprintf(fp, "%s\t\t%.1f\t\t%.1f\t\t\tApproved by Score and Frequency\n", 
                         alunos[j].codigo, alunos[j].nota, alunos[j].faltas);
             }else{
                 if(alunos[j].nota < 5){
-                    fprintf(fp, "%s\t\t%.1f\t%.1f\t\tReprovado por Nota\n", 
+                    fprintf(fp, "%s\t\t%.1f\t\t%.1f\t\tFailed by Score\n", 
                             alunos[j].codigo, alunos[j].nota, alunos[j].faltas);
                 }else{
-                    fprintf(fp, "%s\t\t%.1f\t%.1f\t\tReprovado por Frequencia\n", 
+                    fprintf(fp, "%s\t\t%.1f\t\t%.1f\t\tFailed by Frequency\n", 
                         alunos[j].codigo, alunos[j].nota, alunos[j].faltas);
                 }
             }
@@ -340,8 +353,8 @@ int hist(Aluno user){
     fflush(fp);
     fclose(fp);
     
-    puts("O arquivo foi gerado com sucesso!");
-    puts("Pressione ENTER para continuar");
+    puts("Record file generated successfully!");
+    puts("Type ENTER to continue...");
     getchar();
     
     return 0;

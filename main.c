@@ -1,31 +1,49 @@
 #include "main.h"
 
-/*   PROJETO FINAL SI200A - GRUPO 5
- * - Andrey Toshiro Okamura 213119
- * - Gustavo Adrien Polli 217357
- * - Max Lucio Martins de Assis 222444  
+/*  
+ *  DAC-Project
+ *  FINAL PROJECT FOR SI200 A - GROUP 5
+ *  CONTRIBUITORS:
+ * -> Andrey Toshiro Okamura (GitHub - okamuratoshi)
+ * -> Gustavo Adrien Polli (GitHub - gapolli)
+ * -> Max Lucio Martins de Assis (GitHub - MaxLucio528)
+ * 
+ *  PURPOSE: This project is a fictional system which simulates a enrollment system and a
+ *  enrollment control system for a student from UNICAMP, being capable of generate a school 
+ *  record to the user as well.
  */
 
-Aluno user; //variável global que recebe os dados do aluno que logar
+Aluno user; // Global variable that recieves the student data when he logs in.
 
 int main()
 {
-    int erro; //variável que identifica se tudo ocorreu bem em funções que forem chamadas
-    int opcao; //variável que terá o controle das opções selecionadas no menu
+    int erro; // This variable indicates if everything went well in functions that were called.
+    int opcao; // This variable will have control on the chosen options from the menu.
 
-    erro = 1; //atribuindo 1 à variável para que o laço de login se inicie
-    opcao = -1; //atribuindo -1 à variável para que o laço que executa as ações do programa se inicie
+    erro = 1;
+    opcao = -1;
 
-    while(erro != 0){ //laço que repete o login até o usuário entrar com as credenciais corretas
-        erro = login(&user); //chamando a função de login
+    /*  
+     *  This loop repeats the login until the user enters with the right credentials.
+     *  That's the reason why the number one was attributed to the "erro" variable.
+     */
+    while(erro != 0){
+        clear();
+        erro = login(&user); // Calling the login function; throwing the result in "erro".
     }
 
-    while(opcao != 0){ //laço que executa as ações do programa
+    /*  
+     *  This loop repeats executes the program actions.
+     *  That's the reason why the number minus one was attributed to the "opcao" variable.
+     */
+    while(opcao != 0){
+        clear();
         opcao = menu();
 
-        if(opcao == 0) //finalizando o programa quando o usuário seleciona a opção zero
+        if(opcao == 0)  // Finalizing the program when the user selects the option zero.
             exit(0);
 
-        redirect(opcao, &user); //chamando função que redireciona para o que o usuário escolheu
+        // Calling the function responsible for redirecting the program to the right function.
+        redirect(opcao, &user);
     }
 }

@@ -1,51 +1,51 @@
 #include "main.h"
 
 int consultarDisc(){
-    int i, j, k; //variáveis inteiras auxiliares
-    int validador; //variável que valida se a disciplina foi encontrada com sucesso
-    char codigodisc[6]; //variável que receberá o código da disciplina
-    char codigotemp[6]; /* variável que recebe temporáriamente o código da disciplina
-                         * que é pré-requisito. */
-    int credtemp; /* variável inteira temporária que pega os créditos da disciplina
-                   que é pré-requisito, apenas para navegação no arquivo. */
-    Disciplina disc; //variável do tipo struct disciplina
-    Prereq discPre[7]; //vetor de struct que guarda os pré-requisitos
-    FILE *fp; //ponteiro para arquivo
+    int i, j, k; // Integer auxiliary variables.
+    int validador; // Validation auxiliary variable, will inform the program if subject is found.
+    char codigodisc[6]; // Recieves the subject's code.
+    char codigotemp[6]; // Temporarily recieves the subject's prerequisite subject.
+    int credtemp; // Temporarily recieves the subject's prerequisite credits to help the file navegation.
+    Disciplina disc; // Recieves the subject.
+    Prereq discPre[7]; // Recieves the subject's preqeuisites.
+    FILE *fp; // File pointer.
     
-    fp = fopen("Disciplinas.txt", "r"); //abrindo o arquivo para leitura das disciplinas
+    // Opening this file to read the subjects.
+    fp = fopen("Disciplinas.txt", "r");
     
     if(fp == NULL)
-        return 1; //impossível abrir o arquivo e interrompe a função
+        return 1; // Couldn't open the file, interrupting the function.
     
-    printf("Digite a Disciplina: "); //obtendo o código da disciplina
+    /*  The user type the subject's code.
+     *  OBS: The "scanf" will only get the first five characters the user types because
+     *  all the subjects in UNICAMP have five characters, two letters and three numbers.
+     */
+    printf("Type a subject: ");
     scanf("%5s", codigodisc);
     
-    for(k = 0; k < 2; k++){ //modifica os 2 primeiros dígitos do código informado para maiúsculas
+    for(k = 0; k < 2; k++){ // Changing to upper case the subject's code if isn't already.
         codigodisc[k] = toupper(codigodisc[k]);
     }
     
-    getchar(); /* detalhe: o 5 é para limitar o tanto de caracteres 
-                * que serão pegos, eliminando a necessidade de um
-                * fgets. */
+    getchar(); // Cleaning keyboard buffer.
     
-    validador = 0; /* atribuindo o zero préviamente, caso a disciplina não seja
-                    * encontrada, o valor continuará o mesmo. */
-    
-    //laço que pega os dados das disciplinas até achar a correspondente ou até acabar o arquivo
-    while(fscanf(fp, "%[^,],%[^,],%d\n", disc.codigo, disc.nome, &disc.creditos) != EOF){
-        //condição que compara as strings para descobrir se a disciplina foi encontrada
+    validador = 0; // By default, this indicates the subject wasn't found.
+
+    // This loop look for the subject typed by the user on the file. 
+    while(!feof(fp)){
+        fscanf(fp, "%5[^,],%100[^,],%d\n", disc.codigo, disc.nome, &disc.creditos);
+
+        // Subject is found.
         if(strcmp(codigodisc, disc.codigo) == 0){
-            validador = 1; /* alterando o validador para 1, dessa maneira dessa maneira
-                            é indicado que a disciplina foi encontrada*/
-            
-            break; //saindo do laço
+            validador = 1; // Indicating the subject is found.
+            break;
         }
     }
     
-    //condição que interrompe a função caso não se encontre a disciplina
+    // Interrupting the function if the subject wasn't found.
     if(validador == 0){
-        puts("Disciplina nao encontrada!");
-        puts("Pressione ENTER para continuar...");
+        puts("\nSubject not found!");
+        puts("\nType ENTER to continue...");
         getchar();
         
         fclose(fp);
@@ -54,37 +54,36 @@ int consultarDisc(){
     
     fclose(fp);
     
-    fp = fopen("Prerequisitos.txt", "r"); /* abrindo o arquivo para leitura dos
-                                           pré-requisitos. */
+    // Opening this file to read the chosen subject's prerequisites.
+    fp = fopen("Prerequisitos.txt", "r");
     
     if(fp == NULL)
-        return 1; //impossível abrir o arquivo e interrompe a função
+        return 1; // Couldn't open the file, interrupting the function.
     
-    i = 0; //atribuindo zero a esta variável para usar no laço abaixo
+    i = 0; // Array's size indicator.
     
-    //laço que obterá a disciplina e seu pré-requisito
-    while(fscanf(fp, "%[^,],%[^\n]\n", discPre[i].codDisc, discPre[i].codPrereq) != EOF){
-        //condição de entrada ao achar a disciplina na lita de pré-requisitos
+    // Getting the subject and it's prerequisite.
+    while(!feof(fp)){
+        fscanf(fp, "%5[^,],%5[^\n]\n", discPre[i].codDisc, discPre[i].codPrereq);
+
+        // Found the subject is the prerequisites' list.
         if(strcmp(discPre[i].codDisc, disc.codigo) == 0){
-            /* verificando se a disciplina não tem nenhum pré-requisito, sendo
-             uma condição de parada do laço. */
-            if(strcmp(discPre[i].codPrereq, "0") == 0){
-                validador = 0; /* atribuindo o zero ao validador, desta maneira
-                                entende-se posteriormente que a disciplina não
-                                possui pré-requisito. */
+            // Subject doesn't have a prerequisite.
+            if(discPre[i].codPrereq[0] == '0'){
+                validador = 0; // Indicating the subject doesn't have a prerequisite.
                 break;
-            }else{ // caso contrário ele pega o pré-requisito               
-                i++; //incrementando o i para guardar todos os pré-requisitos
+            }else{ // Getting the prerequisite.               
+                i++; // Increasing the size of the array.
             }
         }
     }
-    
-    //condição que finaliza a função mostrando a disciplina que não tem pré-requisito
+
+    // Displaying the subject if it doesn't have a prerequisite.
     if(validador == 0){
-        printf("Nome: %s\n", disc.nome);
-        printf("Quantidade de Creditos: %d\n", disc.creditos);
-        printf("Pre-requisito: Nenhum\n");
-        puts("Pressione ENTER para continuar...");
+        printf("\nName: %s\n", disc.nome);
+        printf("Amount of Credits: %d\n", disc.creditos);
+        puts("Prerequisite: None");
+        puts("\nType ENTER to continue...");
         getchar();
         
         return 0;
@@ -92,36 +91,37 @@ int consultarDisc(){
     
     fclose(fp);
     
-    fp = fopen("Disciplinas.txt", "r"); /* abrindo o arquivo para leitura das disciplinas
-                                         novamente, porém desta vez para obtenção do nome
-                                         da disciplina que é pré-requisito. */
+    // Opening this file to get the prerequisites' name.
+    fp = fopen("Disciplinas.txt", "r");
     
     if(fp == NULL)
-        return 1; //impossível abrir o arquivo e interrompe a função
+        return 1; // Couldn't open the file, interrupting the function.
     
-    j = 0; //atribuindo zero ao j para usar no laço abaixo
+    j = 0; // Size indicator for the array below.
     
-    /* laço que pega o nome das disciplinas e o código para comparação, porém
-     * os créditos apenas são pegos para evitar conflitos na navegação do arquivo,
-     * ou seja, não são utilizados. */
-    while(fscanf(fp, "%[^,],%[^,],%d\n", codigotemp, discPre[j].nomePre, &credtemp) != EOF){
-        /* comparando se o codigo pego é igual ao do pré-requisito, dessa maneira
-         * muda-se a posição do vetor para guardar outros pré-requisitos. */
+    /*
+     *  Getting the subjects and codes to comparison, but the credits are only obtained
+     *  to avoid conflict on the file navegation (Isn't used). 
+     */
+    while(!feof(fp)){
+        fscanf(fp, "%5[^,],%100[^,],%d\n", codigotemp, discPre[j].nomePre, &credtemp);
+        
+        // Prerequisite found, changing array position to store the next prerequisite.
         if(strcmp(codigotemp, discPre[j].codPrereq) == 0){
             j++;
         }
     }
     
-    //imprimindo na tela a disciplina
-    printf("Nome: %s\n", disc.nome);
-    printf("Quantidade de Creditos: %d\n", disc.creditos);
+    // Printing the subject's information.
+    printf("\nName: %s\n", disc.nome);
+    printf("Amount of Credits: %d\n", disc.creditos);
 
-    //laço que imprime todos os pré-requisitos
+    // Printing all prerequisites.
     for(j = 0; j < i; j++){
-        printf("Pre-requisito: %s\n", discPre[j].nomePre);    
+        printf("Prerequisite: %s\n", discPre[j].nomePre);    
     }
         
-    puts("Pressione ENTER para continuar...");
+    puts("\nType ENTER to continue...");
     getchar();
     
     fclose(fp);

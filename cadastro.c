@@ -1,37 +1,38 @@
 #include "main.h"
 
 int cadastrar(){
-    Aluno cad; //variável que guardará temporariamente os dados do aluno a ser cadastrado
-    FILE *fp; //variável apontadora para arquivo
+    Aluno cad; // Temporarily storing the students' data that will be registered.
+    FILE *fp; // File pointer.
 
-    fp = fopen("Alunos.txt", "a"); //abrindo o arquivo para "append" para que o arquivo não seja reescrito
+    // Opening this file to append the new information.
+    fp = fopen("Alunos.txt", "a");
 
-    if(fp == NULL) //interrompendo a função, pois o arquivo não pode ser aberto
-        return 1;
+    if(fp == NULL)
+        return 1; // Couldn't open the file, interrupting the function.
 
-    //guardando os dados na struct temporariamente para salvar no arquivo
+    // Temporarily storing the data on the struct to later, store on the file.
+    puts("Students Registration:");
     puts("");
-    puts("Cadastro de Alunos:");
-    puts("");
-    printf("Digite o RA do Aluno:");
-    scanf("%d", &cad.ra);
-    getchar(); //limpando o buffer do teclado
+    printf("Type the student's registration number: ");
+    scanf("%6d", &cad.ra);
+    getchar(); // Cleaning the keyboard buffer.
 
-    printf("\nDigite o Nome do Aluno:");
-    scanf("%99[^\n]s", cad.nome); //maneira de permitir que o scanf salve uma string com espaços se necessário
-
-    printf("\nDigite o Login:");
+    printf("\nType the student's name: ");
+    scanf("%99[^\n]s", cad.nome); // Allowing the "scanf" to save strings with space, if that's the case.
+    printf("\nType the login: ");
     scanf("%10s", cad.login);
 
-    printf("\nDigite a Senha:");
+    printf("\nType the password: ");
     scanf("%10s", cad.senha);
+    getchar();
     puts("");
 
-    //salvando no arquivo o novo aluno
+    // Saving the new student in the file.
     fprintf(fp, "%d,%s,%s,%s\n", cad.ra, cad.nome, cad.login, cad.senha);
 
-    puts("Aluno cadastrado com sucesso!");
-    puts("");
+    puts("Student registered successfully!");
+    puts("Type ENTER to continue...");
+    getchar();
     
     fclose(fp);
 

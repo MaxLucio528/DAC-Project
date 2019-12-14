@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 typedef struct matricula{
         int ra;
@@ -20,7 +21,7 @@ typedef struct disciplina{
 } Disciplina;
 
 typedef struct prerequisito{
-        char nomePre[101];
+    char nomePre[101];
 	char codDisc[6];
 	char codPrereq[6];
 } Prereq;
@@ -31,5 +32,15 @@ typedef struct aluno{
 	char login[11];
 	char senha[11];
 } Aluno;
+
+int login(Aluno *user);
+int menu();
+int redirect(int op,Aluno *user);
+int cadastrar();
+void clear();
+int consultarDisc();
+int fazerMatricula(Aluno user);
+int atualizar(Aluno user);
+int hist(Aluno user);
 
 #endif // MAIN_H

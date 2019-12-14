@@ -1,46 +1,47 @@
 #include "main.h"
 
 int atualizar(Aluno user){
-    int i, j, k, l; //variáveis inteiras auxiliares
-    int semtemp; //variável que guarda o semestre temporáriamente
-    int validador; //variável auxiliar de validação
-    char codigodisc[6]; //variável que receberá o código da disciplina
-    char saida[6] = "XX000"; //string que contém o que deve ser digitado para sair
-    Matricula temp; //variável temporária para contagem de matriculas
-    Matricula *alunos; //vetor de struct dinâmico que guarda todos os alunos
-    Disciplina *disc; //vetor de struct dinâmico que guarda as disciplinas do aluno
-    FILE *fp; //ponteiro para arquivo
+    int i, j, k, l; // Integer auxiliary variables.
+    int semtemp; // Temporarily store the semester.
+    int validador; // Validation auxiliary variable.
+    char codigodisc[6]; // Recieves the subject code.
+    char saida[6] = "XX000"; // Stores the code that validates the exit.
+    Matricula temp; // Temporarily stored to count the enrollments.
+    Matricula *alunos; // Stores all the students.
+    Disciplina *disc; // Stores all the subjects the student is enrolled.
+    FILE *fp; // File pointer.
 
-    fp = fopen("AlunosDisciplinas.txt", "r"); /* abrindo o arquivo para contar
-                                               * quantas matrículas tem. */
+    
+    // Opening the file to check how many enrollments there is.
+    fp = fopen("AlunosDisciplinas.txt", "r"); 
     
     if(fp == NULL)
-        return 1; //impossível abrir o arquivo e interrompe a função
+        return 1; // Couldn't open the file, interrupting the function.
     
-    i = 0; //atribuindo inicialmente o zero para o i
+    i = 0; // Used as increment on the loop below.
     
-    //laço que incrementa o i para contar quantas matrículas tem no sistema
-    while(fscanf(fp, "%d,%[^,],%d,%f,%f\n", &temp.ra, temp.codigo, &temp.semestre, 
-            &temp.nota, &temp.faltas) != EOF){
+    // This loop counts how many enrollments there is on the system.
+    while(!feof(fp)){
+        fscanf(fp, "%d,%5[^,],%d,%f,%f\n", &temp.ra, temp.codigo, &temp.semestre, &temp.nota,
+            &temp.faltas);
         i++;
     }
     
     fflush(fp);
     fclose(fp);
     
-    //alocando espaço para guardar as matrículas
+    // Allocating space to store the enrollments.
     alunos = (Matricula *) malloc(i * sizeof(Matricula));
     
-    fp = fopen("AlunosDisciplinas.txt", "r"); /* abrindo o arquivo para ler e
-                                               * salvar no sistema todas as 
-                                               * matrículas existentes. */
+    // Opening the file to read and save the existent enrollments.
+    fp = fopen("AlunosDisciplinas.txt", "r");
     
     if(fp == NULL)
-        return 1; //impossível abrir o arquivo e interrompe a função
+        return 1; // Couldn't open the file, interrupting the function.
     
-    //laço que aloca espaço e salva o resto das matrículas existentes
+    // Saving the remaining subjects.
     for(j = 0; j < i; j++){
-        fscanf(fp, "%d,%[^,],%d,%f,%f\n", &alunos[j].ra, alunos[j].codigo, 
+        fscanf(fp, "%d,%5[^,],%d,%f,%f\n", &alunos[j].ra, alunos[j].codigo, 
                 &alunos[j].semestre, &alunos[j].nota, &alunos[j].faltas);
     }
     
@@ -49,27 +50,30 @@ int atualizar(Aluno user){
     
     puts("Atualizar nota e falta:");
     
-    validador = 0; //inicialmente atribuindo o zero ao validador, deixando-o falso
+    validador = 0;
     
-    //laço que valida o semestre escolhido
+    /*
+     *  Validating the chosen semester.
+     *  That's the reason why zero was atributed to "validador". 
+     */
     while(validador != 1){
         puts("");
-        printf("Digite o semestre: ");
+        printf("Type the semester: ");
         scanf("%d", &semtemp);
         getchar();
         puts("");
         
-        //caso de um semestre menor que 1 ou maior que 10
+        // Used if the user types a invalid semester.
         if(semtemp < 1 || semtemp > 10){
-            puts("Semestre invalido!");
+            puts("Invalid semester!");
 
 			if(semtemp > 10)
-				puts("Acima da integralizacao maxima!");
+				puts("Above the maximum integralization!");
 
             continue;
         }
         
-		//laço que verifica se o aluno tem ou não algum matricula ativa
+        // Checking if the student has or not a active enrollment.
 		for(j = 0; j < i; j++){
 			if(user.ra == alunos[j].ra){
 				validador = 1;
@@ -79,47 +83,48 @@ int atualizar(Aluno user){
 			}
 		}
 
-		//condição de parada caso o aluno não tenha nenhuma matrícula ativa
+        // Stopping the function if the student doesn't have any active enrollment.
 		if(validador == 0){
-			puts("Nao ha nenhuma matricula ainda...");
+			puts("There isn't any enrollment yet...");
 			return 0;
 		}
 
-        /* laço que verifica se o usuário digitou um semestre em que ele não tem
-         * matrícula ainda. */
+        // Checking if the used typed a semester where the doesn't have a enrollment yet.
         for(j = 0; j < i; j++){
-            //condição de parada do laço ao achar o semestre
+            // Stopping the loop if it finds the semester.
             if(user.ra == alunos[j].ra && semtemp == alunos[j].semestre){
                 validador = 1;
                 break;
-            }else{ //caso não ache o validador é indicador disso
+            }else{ // Used when the semester isn't found.
                 validador = -1;
             }
         }
 
-		//condição onde não se achou o semestre
+		// Used when the semester isn't found.
 		if(validador == -1){
-		        puts("Voce nao possui nenhuma matricula neste semestre!");
+		        puts("You don't have any enrollment in this semester!");
 		        continue;
 		}
     }
     
     
-    
-    fp = fopen("Disciplinas.txt", "r"); /* abrindo o arquivo para saber o nome
-                                         * das disciplinas que o aluno se matriculou
-                                         * no semestre em questão. */
+    /*
+     *  Opening this file to know the name of the subjects the student
+     *  enrolled in the semester he selected.
+     */
+    fp = fopen("Disciplinas.txt", "r");
     
     if(fp == NULL)
-       return 1; //impossível abrir o arquivo e interrompe a função
+       return 1; // Couldn't open the file, interrupting the function.
     
-    k = 0; /* variável que guardará quantas disciplinas o aluno se matriculou 
-            * no semestre. */
+    k = 0; // Stores how many subjects the student enrolled in the semester selected.
     
-    /* laço que incrementa k para guardar quantas disciplinas o aluno 
-     * se matriculou no semestre em questão. */
+    /*
+     * Goes through the student struct to check how many subjects the student enrolled
+     * in the semester, storing it in "k".
+     */
     for(j = 0; j < i; j++){
-        //condição onde se encontra uma disciplina que o aluno se matriculou no semestre
+        // Finding a subject the student enrolled in the semester.
         if(user.ra == alunos[j].ra && semtemp == alunos[j].semestre){
             k++;
         }
@@ -128,21 +133,22 @@ int atualizar(Aluno user){
     //alocando espaço para as disciplinas do aluno no semestre
     disc = (Disciplina *) malloc(k * sizeof(Disciplina));
     
-    l = 0; //atribuindo zero ao l para usar como posição do vetor no laço abaixo
+    l = 0; // Used as array position below.
     
-    while(fscanf(fp,"%[^,],%[^,],%d\n", disc[l].codigo, disc[l].nome, 
-            &disc[l].creditos) != EOF){
-        //laço que incrementa l ao achar a disciplina que o aluno se matriculou
+    while(!feof(fp)){
+        fscanf(fp,"%5[^,],%100[^,],%d\n", disc[l].codigo, disc[l].nome, &disc[l].creditos);
+
+        // Increments "l" till it finds the subject the student enrolled.
         for(j = 0; j < i; j++){
-            //condição onde se acha as matérias que o aluno se matriculou
+            // Checking if a subject is one the student enrolled.
             if(alunos[j].ra == user.ra && semtemp == alunos[j].semestre){
-                //condição onde se encontra a disciplina que o aluno cursou
+                // Finding the subject the student enrolled.
                 if(strcmp(alunos[j].codigo, disc[l].codigo) == 0)
                     l++;
             }
         }
         
-        //evitando que o laço tente salvar em uma posição inexistente
+        // Preventing the loop to go to a unexistent position.
         if(l >= k)
             break;
     }
@@ -150,18 +156,17 @@ int atualizar(Aluno user){
     fflush(fp);
     fclose(fp);
     
-    puts("Disciplinas:");
+    puts("Subjects:");
     
-    //laço que imprime todas as disciplinas do aluno no semestre escolhido
+    // Printing the subjects the student enrolled in the semester chosen.
     for(l = 0; l < k; l++){
-        /* laço aninhado que percorre o vetor de struct toda vez para poder
-         * imprimir corretamente todas as disciplinas. */
+        // Goes through the struct array to print correctly the information.
         for(j = 0; j < i; j++){
-            //condição onde acha-se as disciplinas do aluno no semestre escolhido
+            // Looking for the subjects in the semester chosen previosly.
             if(alunos[j].ra == user.ra && semtemp == alunos[j].semestre){
-                //condição onde se encontra a disciplina que o aluno cursou
+                // Finding the subjects in the semester chosen previosly.
                 if(strcmp(alunos[j].codigo, disc[l].codigo) == 0){
-                    printf("%s - %s - Nota: %.1f, Falta (%%): %.1f\n", alunos[j].codigo,
+                    printf("%s - %s - Score: %.1f, Absences (%%): %.1f\n", alunos[j].codigo,
                             disc[l].nome, alunos[j].nota, alunos[j].faltas);
                 }         
             }
@@ -170,67 +175,67 @@ int atualizar(Aluno user){
     
     puts("");
     
-    //laço que atualiza a nota do aluno
+    // This loop updates the students' score.
     do{
-        puts("Para sair, digite XX000");
-        printf("Digite o codigo da disciplina que deseja fazer a alteracao: ");
+        puts("To exit, type XX000");
+        printf("Type the code of the subject you want to update: ");
         scanf("%5s", codigodisc);
         
-        for(l = 0; l < 2; l++){ //modifica os 2 primeiros dígitos do código informado para maiúsculas
+        for(l = 0; l < 2; l++){ // Changing to upper case the subject's code if isn't already.
             codigodisc[l] = toupper(codigodisc[l]);
         }
         
         puts("");
         getchar();
         
-        //çondição para sair da função
+        // This allow the program to break the loop and exit the function.
         if(strcmp(codigodisc, saida) == 0){
-            puts("Atualizacao com sucesso");
-            puts("Pressione ENTER para continuar...");
+            puts("Successfully updated!");
+            puts("Type ENTER to continue...");
             getchar();
             break;
         }
         
-        //laço que verifica se o aluno está matriculado na disciplina digitada
+        // This loop verifies if the student is enrolled in the typed subject.
         for(l = 0; l < k; l++){
-            //condição onde o aluno está matriculado na disciplina digitada
+            // Used when the student is enrolled in the subject.
             if(strcmp(codigodisc, disc[l].codigo) == 0){
                 validador = 1;
                 break;
-            }else{ //condição onde a disciplina não foi encontrada
+            }else{ // Subject wasn't found.
                 validador = 0;
             }
         }
         
-        //condição de reiniciar o laço caso a disciplina não tenha sido encontrada
+        // Restarting the loop if the subject wasn't found.
         if(validador == 0){
-            puts("Nao e possivel se matricular nesta disciplina!");
+            puts("Subject not found!");
             continue;
         }
         
-        //laço que salva no vetor de struct os novos dados
+        // Saving the updated data in the struct array.
         for(j = 0; j < i; j++){
-            //condição onde a disciplina foi encontrada
+            // Subject found.
             if(user.ra == alunos[j].ra && strcmp(codigodisc, alunos[j].codigo) == 0){
-                printf("Nota: ");
-		//laço que repete a obtenção de nota até ter uma nota válida
+                printf("Score: ");
+		        // Loop that allows the user to input the new score.
                 do{
 					scanf("%f", &alunos[j].nota);
 
 					if(alunos[j].nota < 0 || alunos[j].nota > 10)
-						puts("Nota invalida! Tente novamente...");
+						puts("Invalid score! Try again...");
 				}while(alunos[j].nota < 0 || alunos[j].nota > 10);
                 
 				puts("");
 				getchar();
                 
-                printf("Falta (%%): ");
-		//laço que repete a obtenção de faltas até ter uma porcentagem válida
+                printf("Absence (%%): ");
+		        // Loop that allows the user to input the new absence quantity.
 				do{
 				        	scanf("%f", &alunos[j].faltas);
 
 					if(alunos[j].faltas < 0 || alunos[j].faltas > 100)
-						puts("Porcentagem invalida! Tente novamente...");
+						puts("Invalid percentage! Try again...");
 				}while(alunos[j].faltas < 0 || alunos[j].faltas > 100);                
 		
 				puts("");
@@ -240,16 +245,15 @@ int atualizar(Aluno user){
             }
         }
         
-        fp = fopen("AlunosDisciplinas.txt", "w"); /* Abrindo o arquivo para
-                                                   * escrita para atualizar as
-                                                   * informações de nota e falta. */
+        // Opening this file to update the score and the absence.
+        fp = fopen("AlunosDisciplinas.txt", "w");
         
         if(fp == NULL)
-            return 1; //impossível abrir o arquivo e interrompe a função
+            return 1; // Couldn't open the file, interrupting the function.
         
-        //laço que salva no arquivo os novos dados atualizados
+        // Loop that will save the updated data.
         for(j = 0; j < i; j++){
-            //imprimindo no arquivo os novos dados atualizados
+            // Saving the updated data.
             fprintf(fp, "%d,%s,%d,%.1f,%.1f\n", alunos[j].ra, alunos[j].codigo,
                     alunos[j].semestre, alunos[j].nota, alunos[j].faltas);
         }
@@ -257,8 +261,8 @@ int atualizar(Aluno user){
         fflush(fp);
         fclose(fp);
         
-        puts("Atualizacao com sucesso");
-        puts("Pressione ENTER para continuar...");
+        puts("Successfully updated!");
+        puts("Type ENTER to continue...");
         getchar();
         
     }while(strcmp(codigodisc, saida) != 0);

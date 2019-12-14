@@ -1,52 +1,62 @@
 #include "main.h"
 
 int login(Aluno *user){
-    FILE *fp; //variável apontadora do arquivo
-    char login[10], senha[10]; //strings que receberão do usuário o login e senha
-    char nomeArq[100], loginArq[10], senhaArq[10]; //strings que salvarão dados puxados do arquivo
-    int raArq; //inteiro que receberá os RAs do arquivo
+    FILE *fp; // File pointer.
+    char login[11], senha[11]; // Those string will recieve login and the password data. 
+    char nomeArq[101], loginArq[11], senhaArq[11]; // Those strings will save the data obtained from the file.
+    int raArq; // Will recieve the students register number from file.
 
-    fp = fopen("Alunos.txt", "r"); //abrindo o arquivo para leitura
+    fp = fopen("Alunos.txt", "r"); // Open the file with the students data.
 
-    if(fp == NULL){ //condição de finalização do programa caso o arquivo não seja aberto com sucesso
-        puts("Impossivel abrir o arquivo!");
+    if(fp == NULL){ // Couldn't open the file, interrupting the function.
+        puts("Couldn't open the file!");
         exit(1);
     }
 
-    //recebendo os dados de login e senha do usuário
-    puts("Por favor, insira seu usuario e senha:");
-    printf("Usuario: ");
-    scanf("%s", login);
-    printf("Senha: ");
-    scanf("%s", senha);
+    // Recieving the user login and password.
+    puts("Please, type your username and password:");
+    printf("Username: ");
+    scanf("%10s", login);
+    printf("Password: ");
+    scanf("%10s", senha);
+    getchar();
 
-    /*laço que percorre o arquivo até encontrar o login e senha correspondente com o que o
-    usuário digitou anteriormente. */
-    while(fscanf(fp, "%d,%[^,],%[^,],%[^\n]", &raArq, nomeArq, loginArq, senhaArq)!= EOF){
-        //comparando dados para autenticação
+    /*
+     *  This loop goes through the file until it finds the corresponding login and password
+     *  the user typed before. 
+     */
+    while(!feof(fp)){
+        fscanf(fp, "%d,%100[^,],%10[^,],%10[^\n]\n", &raArq, nomeArq, loginArq, senhaArq);
+
+        // Comparing the data for authentication.
         if(strcmp(login, loginArq) == 0 && strcmp(senha, senhaArq) == 0){
-            /* Jogando dados pegos do arquivo na variável global que será usada no
-            decorrer do programa. */
+            /*
+             * Putting the data obtained from the file in the global variable that
+             * will be used during the program excution. 
+             */
             (*user).ra = raArq;
             strcpy((*user).nome, nomeArq);
             strcpy((*user).login, loginArq);
             strcpy((*user).senha, senhaArq);
 
-            //impresso quando o usuário for autenticado
+            // Printed when the user is authenticated.
             puts("");
-            puts("Logado com Sucesso!");
-            puts("");
+            puts("Successfully logged in!");
+            puts("Type ENTER to continue...");
+            getchar();
 
             fclose(fp);
 
             return 0;
         }
+
     }
 
-    //impresso em caso de falha de autenticação
+    // Printed when the authentication fails.
     puts("");
-    puts("Usuario nao encontrado! Tente novamente!");
-    puts("");
+    puts("User not found! Try again!");
+    puts("Type ENTER to continue...");
+    getchar();
 
     fclose(fp);
 

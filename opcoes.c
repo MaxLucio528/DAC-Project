@@ -1,61 +1,66 @@
 #include "main.h"
 
 int redirect(int op,Aluno *user){
-    int aux; //variável inteira auxiliar
-    int erro; /* variável que recebe o que uma função chamada retorna e dessa
-               * maneira, descobre-se se a função funcionou normalmente ou não. */
+    int aux; // Auxiliary variable.
+    int erro; // Recieves what a function returns.
 
     switch(op){
         case 1:
-            erro = cadastrar(); //chamando a função de cadastro
+            clear();
+            erro = cadastrar(); // Calling the register function.
 
-            //condição satisfeita quando o programa não consegue abrir o arquivo
+            // Couldn't open the file, interrupting the function.
             if(erro == 1)
-                puts("Erro ao abrir o arquivo!");
+                puts("Couldn't open the file!");
         break;
 
         case 2:
-            erro = consultarDisc(); //chamando a função de consulta
+            clear();
+            erro = consultarDisc(); // Calling the subject query function.
             
-            //condição satisfeita quando o programa não consegue abrir o arquivo
+            // Couldn't open the file, interrupting the function.
             if(erro == 1)
-                puts("Erro ao abrir o arquivo!");
+                puts("Couldn't open the file!");
         break;
 
         case 3:
-            erro = fazerMatricula(*user); //chamando a função de matrícula
+            clear();
+            erro = fazerMatricula(*user); // Calling the enrollment function.
             
-            //condição satisfeita quando o programa não consegue abrir o arquivo
+            // Couldn't open the file, interrupting the function.
             if(erro == 1)
-                puts("Erro ao abrir o arquivo!");
+                puts("Couldn't open the file!");
         break;
 
         case 4:
-            erro = atualizar(*user); //chamando a função de atualizar nota e falta
+            clear();
+            erro = atualizar(*user); // Calling the function that update scores and absences.
             
-            //condição satisfeita quando o programa não consegue abrir o arquivo
+            // Couldn't open the file, interrupting the function.
             if(erro == 1)
-                puts("Erro ao abrir o arquivo!");
+                puts("Couldn't open the file!");
         break;
         
         case 5:
-            erro = hist(*user); //chamando a função de consultar histórico
+            clear();
+            erro = hist(*user); // Calling the function that query the record.
             
-            //condição satisfeita quando o programa não consegue abrir o arquivo
+            // Couldn't open the file, interrupting the function.
             if(erro == 1)
-                puts("Erro ao abrir o arquivo!");
+                puts("Couldn't open the file!");
         break;
         
         case 6:
-            while(erro != 0){ //laço que repete o login até o usuário entrar com as credenciais corretas
-                erro = login(user); //chamando a função de login
+            while(erro != 0){ // This loop repeats the login until the user enters with the right credentials.
+                clear();
+                erro = login(user); // Calling the login function.
             }
         break;
 
         default:
-            //apenas impresso caso a opção escolhida não conste no programa
+            // Printed when the used select a unexistent option.
             puts("");
-            puts("Opcao Invalida!");
+            puts("Invalid Option!");
             puts("");
     }
 }
