@@ -1,5 +1,6 @@
 #include "main.h"
 
+// Function that clears the terminal screen.
 void clear(){
     #ifndef POWERSHELL
         system("clear");
